@@ -46,10 +46,12 @@ MonoBehaviour:
     flooring:
     - gameObject: {fileID: 8761019777689142071, guid: 0234e9a5ed8e17845afb71ada7e4676d, type: 3}
       name: Floor
-    player: {fileID: 0}
+    player: {fileID: 4929968649618691370, guid: 797795d0300a44910be2440209dbe5ce, type: 3}
     minEnemiesPerRoom: 0
-    maxEnemiesPerRoom: 0
-    enemies: []
+    maxEnemiesPerRoom: 2
+    enemies:
+    - gameObject: {fileID: 4964583375678046164, guid: 558b8ad2f83da42af855e22e4802db85, type: 3}
+      name: 
     bosses: []
     breakables: []
     staticObjects: []

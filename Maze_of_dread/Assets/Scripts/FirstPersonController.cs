@@ -20,17 +20,19 @@ public class FirstPersonController : MonoBehaviour
         controller = GetComponent<CharacterController>();
         playerCamera = GetComponentInChildren<Camera>();
 
-        Cursor.lockState = CursorLockMode.Locked; // Hide and lock the cursor
-        Cursor.visible = false; // Make cursor invisible
+        //Cursor.lockState = CursorLockMode.Locked; // Hide and lock the cursor
+        //Cursor.visible = false; // Make cursor invisible
     }
 
     void Update()
     {
-        if (Cursor.lockState == CursorLockMode.Locked)
+        /*if (Cursor.lockState == CursorLockMode.Locked)
         {
             MovePlayer();
             LookAround();
-        }
+        }*/
+        MovePlayer();
+        LookAround();
     }
 
     void MovePlayer()
@@ -82,7 +84,7 @@ public class FirstPersonController : MonoBehaviour
     }
 
     // Additional Methods for Locking/Unlocking Cursor (Optional for UI interaction)
-    public void UnlockCursorForUI()
+    /*public void UnlockCursorForUI()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;  // Show cursor if it's interacting with the UI
@@ -92,5 +94,5 @@ public class FirstPersonController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;  // Hide the cursor when locked for gameplay
-    }
+    }*/
 }

@@ -74,6 +74,8 @@ public class Generator : MonoBehaviour
     private List<GameObject> doorGameObjects = new List<GameObject>();
 
     private static int numberOfRooms;
+    //public List<Transform> allPatrolPoints = new List<Transform>(); // List to store all patrol points
+
 
     private string[] floorRemovables = { "Floor", "(", ")", "", " ", "," };
 
@@ -83,6 +85,7 @@ public class Generator : MonoBehaviour
     public List<ObjectList> Enemies { get => enemies; }
     public int AmountOfAdjacentRoomsToConnect { get => amountOfAdjacentRoomsToConnect; }
     public GenerationSettings GenerationSettings { get => generationSettings; }
+
 
     private void Awake()
     {
@@ -437,6 +440,7 @@ public class Generator : MonoBehaviour
                             BoxCollider collider = parents[i].AddComponent<BoxCollider>();
                             collider.size = new Vector3(roomArea[i].x - 1 , 3, roomArea[i].y - 1);
                             collider.isTrigger = true;
+
                         }
 
                         int randomFLooring = Random.Range(0, flooring.Count);
