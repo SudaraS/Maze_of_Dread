@@ -8,6 +8,9 @@ TagManager:
   - Wall
   - OuterCorner
   - Room
+  - Book
+  - Sword
+  - Potion
   layers:
   - Default
   - TransparentFX
@@ -15,8 +18,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Player
+  - Collectables
   - 
   - 
   - 
