@@ -80,7 +80,7 @@ public class DungeonSpawn : MonoBehaviour
     private void SpawnEnemies()
     {
         Debug.Log("Spawning enemies...");
-        Debug.Log("parent room: " + parentRooms.Length);
+        
         // Iterate through each room to spawn enemies
         for (int i = 0; i < parentRooms.Length; i++)
         {

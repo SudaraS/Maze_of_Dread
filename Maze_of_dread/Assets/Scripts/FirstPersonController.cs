@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class FirstPersonController : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class FirstPersonController : MonoBehaviour
     private Vector3 moveDirection;
     private AudioSource footstepAudioSource;
     private AudioSource collectablesAudioSource;
+    private int totalItems = 3;
+    private int itemsCollected = 0;
+    public  GameObject GameOverScreen;
 
     public ParticleSystem BurstEffect;
     public AudioClip bookSound;
@@ -33,6 +37,21 @@ public class FirstPersonController : MonoBehaviour
 
         footstepAudioSource.clip = footstepsClip;
         footstepAudioSource.loop = true;
+
+
+        if (GameOverScreen == null)
+        {
+            GameOverScreen = GameObject.Find("GameOverPanel");
+            GameOverScreen.SetActive(false);
+            if (GameOverScreen == null)
+            {
+                Debug.LogError("GameOverPanel not found! Check the name or ensure it's in the scene.");
+            }
+        }
+
+        if(GameOverScreen != null){
+            GameOverScreen.SetActive(false);
+        }
     }
 
     void Update()
@@ -90,26 +109,43 @@ public class FirstPersonController : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, interactDistance))
             {
-                // Check for the "Collectable" tag
                 if (hit.collider.CompareTag("Book"))
                 {
-                    Debug.Log("Book Collected!");
-                    collectablesAudioSource.PlayOneShot(bookSound); // Play collection sound
-                    Destroy(hit.collider.gameObject);
+                    CollectItem(bookSound, hit.collider.gameObject);
                 }
                 else if (hit.collider.CompareTag("Sword"))
                 {
-                    Debug.Log("Sword Collected!");
-                    collectablesAudioSource.PlayOneShot(swordSound); // Play collection sound
-                    Destroy(hit.collider.gameObject);
+                    CollectItem(swordSound, hit.collider.gameObject);
                 }
                 else if (hit.collider.CompareTag("Potion"))
                 {
-                    Debug.Log("Potion Collected!");
-                    collectablesAudioSource.PlayOneShot(potionSound); // Play collection sound
-                    Destroy(hit.collider.gameObject);
+                    CollectItem(potionSound, hit.collider.gameObject);
                 }
             }
         }
+    }
+
+    void CollectItem(AudioClip clip, GameObject item)
+    {
+        collectablesAudioSource.PlayOneShot(clip);
+        Destroy(item);
+        itemsCollected++;
+
+        if (itemsCollected >= totalItems)
+        {
+            ShowGameOver();
+        }
+    }
+
+    void ShowGameOver()
+    {
+        GameOverScreen.SetActive(true);
+        Time.timeScale = 0f;  // Pause the game
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;  // Resume the game
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
