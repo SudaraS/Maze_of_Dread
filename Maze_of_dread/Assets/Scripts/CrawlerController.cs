@@ -1,79 +1,117 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
+using UnityEngine.AI;  
 
 public class CrawlerController : MonoBehaviour
 {
-    public float wanderRadius = 1f; // Radius within the room for random wandering
-    public float idleTime = 2f; // Time in seconds to idle between movements
-    public float detectionRange = 10f; // Distance at which the enemy will detect the player
-    public Transform player; // Reference to the player
+    public Transform player;
+    public float detectionRadius = 5f;
+    public float attackRadius = 0.5f;
+    public float patrolSpeed = 2f;
+    public float chaseSpeed = 3f;
 
+    private Animator animator;    
     private NavMeshAgent agent;
-    private float idleTimer;
-    private bool isIdling = false;
+    private Vector3 patrolPoint;
+    private bool isPatrolling = true;
+    private bool isChasing = false;
+    //private bool isWalking = true;
+    private bool isAttacking = false;
+    private Vector3 roomMinBounds;
+    private Vector3 roomMaxBounds;
 
     void Start()
     {
+        animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
-        idleTimer = idleTime;
+        agent.speed = patrolSpeed;
 
-        // Check if the agent starts on a valid NavMesh area
-        if (!agent.isOnNavMesh)
-        {
-            Debug.LogWarning("NavMeshAgent is not on the NavMesh. Please ensure the enemy is positioned on a valid NavMesh area.");
-        }
+        // Assuming you assigned the room bounds (roomCollider) to your enemy
+        Collider roomCollider = transform.parent.GetComponent<Collider>();
+        roomMinBounds = roomCollider.bounds.min;
+        roomMaxBounds = roomCollider.bounds.max;
+
+        SetNewPatrolPoint();
     }
 
     void Update()
     {
-        // Only proceed if the agent is on the NavMesh
-        if (!agent.isOnNavMesh) return;
-
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        if (distanceToPlayer < detectionRange)
+        if (distanceToPlayer <= attackRadius)
         {
-            // Chase the player if within detection range
-            agent.SetDestination(player.position);
+            AttackPlayer();
         }
-        else
+        else if (distanceToPlayer <= detectionRadius)
         {
-            if (isIdling)
-            {
-                // Count down idle time
-                idleTimer -= Time.deltaTime;
+            StartChasingPlayer();
+        }
+        else if (isChasing)
+        {
+            StopChasingPlayer();
+        }
 
-                if (idleTimer <= 0)
-                {
-                    // Stop idling and start wandering
-                    isIdling = false;
-                    Wander();
-                }
-            }
-            else
-            {
-                // Check if agent has reached its destination
-                if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-                {
-                    // Start idling
-                    isIdling = true;
-                    idleTimer = idleTime;
-                }
-            }
+        // Continue patrolling if not chasing
+        if (isPatrolling)
+        {
+            Patrol();
         }
     }
 
-    void Wander()
+    private void SetNewPatrolPoint()
     {
-        // Find a random point within the wander radius
-        Vector3 randomDirection = Random.insideUnitSphere * wanderRadius;
-        randomDirection += transform.position;
+        float x = Random.Range(roomMinBounds.x, roomMaxBounds.x);
+        float z = Random.Range(roomMinBounds.z, roomMaxBounds.z);
+        patrolPoint = new Vector3(x, transform.position.y, z);
 
-        // Ensure the point is on the NavMesh
-        NavMeshHit navHit;
-        if (NavMesh.SamplePosition(randomDirection, out navHit, wanderRadius, NavMesh.AllAreas))
+        agent.SetDestination(patrolPoint);
+    }
+
+    private void Patrol()
+    {
+        //animator.SetTrigger("Idle");
+        // Check if enemy reached the patrol point
+        if (Vector3.Distance(transform.position, patrolPoint) <= 1f)
         {
-            agent.SetDestination(navHit.position);
+            SetNewPatrolPoint();
         }
+    }
+
+    private void StartChasingPlayer()
+    {
+        //Debug.Log("Chasing!");
+        isPatrolling = false;
+        isChasing = true;
+        animator.SetBool("isChasing", true);
+        animator.SetTrigger("CrawlFast");
+        agent.speed = chaseSpeed;
+        agent.SetDestination(player.position);
+    }
+
+    private void StopChasingPlayer()
+    {
+        isPatrolling = true;
+        isChasing = false;
+        agent.speed = patrolSpeed;
+        SetNewPatrolPoint();
+    }
+
+    private void AttackPlayer()
+    {
+        animator.SetTrigger("Attack");
+        animator.SetBool("isAttacking", false);
+        // Handle your attack logic, such as reducing player health, playing an animation, etc.
+        Debug.Log("Enemy attacks the player!");
+        // You could use agent.isStopped = true to stop movement while attacking.
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, attackRadius);
     }
 }

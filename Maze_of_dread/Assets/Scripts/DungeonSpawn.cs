@@ -72,12 +72,15 @@ public class DungeonSpawn : MonoBehaviour
         // Spawn enemies if the list is not empty
         if (Enemies.Count > 0)
         {
+            parentRooms = GameObject.FindGameObjectsWithTag("Room");
             SpawnEnemies();
         }
     }
 
     private void SpawnEnemies()
     {
+        Debug.Log("Spawning enemies...");
+        Debug.Log("parent room: " + parentRooms.Length);
         // Iterate through each room to spawn enemies
         for (int i = 0; i < parentRooms.Length; i++)
         {
@@ -99,9 +102,12 @@ public class DungeonSpawn : MonoBehaviour
             }
 
             // Determine the number of enemies to spawn in this room
-            int enemiesToSpawn = Random.Range(minEnemiesPerRoom, maxEnemiesPerRoom);
+            //int enemiesToSpawn = Random.Range(minEnemiesPerRoom, maxEnemiesPerRoom);
+            int enemiesToSpawn = Mathf.Min(Random.Range(minEnemiesPerRoom, maxEnemiesPerRoom), floorTiles.Count);
 
-            // Spawn each enemy randomly within the room bounds
+
+            if(floorTiles.Count > 0){
+                // Spawn each enemy randomly within the room bounds
             for (int j = 0; j < enemiesToSpawn; j++)
             {
                 bool isSpawned = false;
@@ -109,7 +115,7 @@ public class DungeonSpawn : MonoBehaviour
                 // Attempt to place an enemy until successfully placed
                 while (!isSpawned)
                 {
-                    int randomTileIndex = Random.Range(0, floorCount);
+                    int randomTileIndex = Random.Range(0, floorTiles.Count);
                     GameObject floorTile = floorTiles[randomTileIndex];
 
                     if (!IsOccupied(floorTile))
@@ -130,6 +136,14 @@ public class DungeonSpawn : MonoBehaviour
                     }
                 }
             }
+            }
+            /*else if (floorTiles.Count == 0)
+            {
+                Debug.LogWarning("Skipping enemy spawn in room " + i + " - no floor tiles found.");
+                continue;
+            }*/
+
+            
         }
     }
 

@@ -11,28 +11,34 @@ public class FirstPersonController : MonoBehaviour
 
     private CharacterController controller;
     private Camera playerCamera;
-    private float rotationX = 0f;
-
+    //private float rotationX = 0f;
     private Vector3 moveDirection;
+    private AudioSource footstepAudioSource;
+    private AudioSource collectablesAudioSource;
+
+    public ParticleSystem BurstEffect;
+    public AudioClip bookSound;
+    public AudioClip swordSound;
+    public AudioClip potionSound;
+    public AudioClip footstepsClip;
+
+    public float interactDistance = 3f;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         playerCamera = GetComponentInChildren<Camera>();
+        footstepAudioSource = GetComponents<AudioSource>()[0];  // Reference to AudioSource
+        collectablesAudioSource = GetComponents<AudioSource>()[1];
 
-        //Cursor.lockState = CursorLockMode.Locked; // Hide and lock the cursor
-        //Cursor.visible = false; // Make cursor invisible
+        footstepAudioSource.clip = footstepsClip;
+        footstepAudioSource.loop = true;
     }
 
     void Update()
     {
-        /*if (Cursor.lockState == CursorLockMode.Locked)
-        {
-            MovePlayer();
-            LookAround();
-        }*/
         MovePlayer();
-        LookAround();
+        TryCollect();
     }
 
     void MovePlayer()
@@ -43,6 +49,16 @@ public class FirstPersonController : MonoBehaviour
     // Get rotation input from the left and right arrow keys (or A/D)
     float rotationInput = Input.GetAxis("Horizontal");
     float moveInput = Input.GetAxis("Vertical"); // Forward/backward movement (up/down arrow keys or W/S)
+
+    // Check if there is forward or backward movement
+    if (moveInput != 0 && !footstepAudioSource.isPlaying)
+    {
+        footstepAudioSource.Play(); // Play footstep sound when moving
+    }
+    else if (moveInput == 0 && footstepAudioSource.isPlaying)  // Stop footstep sound when not moving
+    {
+        footstepAudioSource.Stop();  // Stop footstep sound if player isn't moving
+    }
 
     // Rotate the player with left and right arrow keys
     transform.Rotate(Vector3.up * rotationInput * lookSpeedX);
@@ -64,35 +80,36 @@ public class FirstPersonController : MonoBehaviour
     controller.Move(move * Time.deltaTime);
 }
 
-
-
-    void LookAround()
+    
+    void TryCollect()
     {
-        // Mouse X controls the horizontal rotation of the player (turning)
-        float mouseX = Input.GetAxis("Mouse X") * lookSpeedX;
-        // Mouse Y controls the vertical rotation of the camera (looking up/down)
-        float mouseY = Input.GetAxis("Mouse Y") * lookSpeedY;
+        if (Input.GetMouseButtonDown(0) || Input.touchCount > 0)
+        {
+            Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
 
-        rotationX -= mouseY;
-        rotationX = Mathf.Clamp(rotationX, -90f, 90f); // Prevent camera from flipping
-
-        // Apply vertical camera rotation (pitch)
-        playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
-
-        // Apply horizontal player rotation (yaw) for looking around
-        transform.Rotate(Vector3.up * mouseX);
+            if (Physics.Raycast(ray, out hit, interactDistance))
+            {
+                // Check for the "Collectable" tag
+                if (hit.collider.CompareTag("Book"))
+                {
+                    Debug.Log("Book Collected!");
+                    collectablesAudioSource.PlayOneShot(bookSound); // Play collection sound
+                    Destroy(hit.collider.gameObject);
+                }
+                else if (hit.collider.CompareTag("Sword"))
+                {
+                    Debug.Log("Sword Collected!");
+                    collectablesAudioSource.PlayOneShot(swordSound); // Play collection sound
+                    Destroy(hit.collider.gameObject);
+                }
+                else if (hit.collider.CompareTag("Potion"))
+                {
+                    Debug.Log("Potion Collected!");
+                    collectablesAudioSource.PlayOneShot(potionSound); // Play collection sound
+                    Destroy(hit.collider.gameObject);
+                }
+            }
+        }
     }
-
-    // Additional Methods for Locking/Unlocking Cursor (Optional for UI interaction)
-    /*public void UnlockCursorForUI()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;  // Show cursor if it's interacting with the UI
-    }
-
-    public void LockCursorForGameplay()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;  // Hide the cursor when locked for gameplay
-    }*/
 }

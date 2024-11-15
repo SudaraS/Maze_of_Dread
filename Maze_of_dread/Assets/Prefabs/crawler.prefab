@@ -1736,6 +1736,7 @@ GameObject:
   - component: {fileID: 4964583375685291454}
   - component: {fileID: 6146697287251242742}
   - component: {fileID: -6635336367404297341}
+  - component: {fileID: 7016293480701346216}
   m_Layer: 0
   m_Name: crawler
   m_TagString: Untagged
@@ -1796,10 +1797,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df58177fc8bc74febb69213e937ccc22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wanderRadius: 3
-  idleTime: 2
-  detectionRange: 10
   player: {fileID: 4929968649618691366, guid: 797795d0300a44910be2440209dbe5ce, type: 3}
+  detectionRadius: 5
+  attackRadius: 0.5
+  patrolSpeed: 2
+  chaseSpeed: 3
 --- !u!195 &-6635336367404297341
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1822,6 +1824,19 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!65 &7016293480701346216
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4964583375678046164}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4964583375678046166
 GameObject:
   m_ObjectHideFlags: 0
