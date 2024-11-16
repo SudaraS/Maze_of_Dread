@@ -150,8 +150,7 @@ public class DungeonSpawn : MonoBehaviour
     // Helper function to check if a spawn point is already occupied
     private bool IsOccupied(GameObject floorTile)
     {
-        // Example implementation: could be based on your MidPoints, Corners, or other logic
-        // This can be updated based on specific criteria for valid spawn points
-        return false; // Update this based on your conditions
+        
+        return false; 
     }
 }
