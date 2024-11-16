@@ -27,7 +27,6 @@ public class CrawlerController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.speed = patrolSpeed;
 
-        // Assuming you assigned the room bounds (roomCollider) to your enemy
         Collider roomCollider = transform.parent.GetComponent<Collider>();
         roomMinBounds = roomCollider.bounds.min;
         roomMaxBounds = roomCollider.bounds.max;
@@ -101,9 +100,7 @@ public class CrawlerController : MonoBehaviour
     {
         animator.SetTrigger("Attack");
         animator.SetBool("isAttacking", false);
-        // Handle your attack logic, such as reducing player health, playing an animation, etc.
         Debug.Log("Enemy attacks the player!");
-        // You could use agent.isStopped = true to stop movement while attacking.
     }
 
     void OnDrawGizmosSelected()
