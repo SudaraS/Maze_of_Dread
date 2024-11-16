@@ -8,7 +8,7 @@ public class StartGameManager : MonoBehaviour
     public void StartGame()
     {
         // Load the main game scene
-        SceneManager.LoadScene("Demo"); // Replace with your actual game scene name
+        SceneManager.LoadScene("Demo"); 
     }
 
     public void QuitGame()
@@ -20,7 +20,7 @@ public class StartGameManager : MonoBehaviour
     public void LoadMainMenu()
     {
         // Load the Main Menu scene
-        SceneManager.LoadScene("MainMenuScene"); // Replace "MainMenuScene" with the name of your Main Menu scene
+        SceneManager.LoadScene("MainMenuScene"); 
     }
     public void ShowInstructions()
     {
