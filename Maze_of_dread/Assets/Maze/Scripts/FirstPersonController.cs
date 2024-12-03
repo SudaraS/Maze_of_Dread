@@ -12,44 +12,59 @@ public class FirstPersonController : MonoBehaviour
 
     private CharacterController controller;
     private Camera playerCamera;
-    //private float rotationX = 0f;
     private Vector3 moveDirection;
     private AudioSource footstepAudioSource;
     private AudioSource collectablesAudioSource;
-    private int totalItems = 3;
-    private int itemsCollected = 0;
-    public  GameObject GameOverScreen;
+    private int totalItems = 3; // Total number of items to collect
+    private int itemsCollected = 0; // Counter for collected items
+    public GameObject GameOverScreen;
 
-    public ParticleSystem BurstEffect;
-    public AudioClip bookSound;
-    public AudioClip swordSound;
-    public AudioClip potionSound;
-    public AudioClip footstepsClip;
+    public ParticleSystem BurstEffect; // Particle effect prefab for collection
+    public AudioClip bookSound; // Audio for collecting book
+    public AudioClip swordSound; // Audio for collecting sword
+    public AudioClip potionSound; // Audio for collecting potion
+    public AudioClip footstepsClip; // Footstep audio
 
-    public float interactDistance = 3f;
+    public float interactDistance = 3f; // Distance for interaction
 
     void Start()
     {
+        // Initialize components
         controller = GetComponent<CharacterController>();
         playerCamera = GetComponentInChildren<Camera>();
-        footstepAudioSource = GetComponents<AudioSource>()[0];  // Reference to AudioSource
-        collectablesAudioSource = GetComponents<AudioSource>()[1];
 
-        footstepAudioSource.clip = footstepsClip;
-        footstepAudioSource.loop = true;
+        // Get AudioSource components
+        AudioSource[] audioSources = GetComponents<AudioSource>();
+        if (audioSources.Length >= 2)
+        {
+            footstepAudioSource = audioSources[0];
+            collectablesAudioSource = audioSources[1];
+        }
+        else
+        {
+            Debug.LogError("Not enough AudioSource components attached to the GameObject.");
+        }
 
+        // Set up footstep audio
+        if (footstepAudioSource != null)
+        {
+            footstepAudioSource.clip = footstepsClip;
+            footstepAudioSource.loop = true;
+        }
 
+        // Find GameOverPanel in the scene if not assigned
         if (GameOverScreen == null)
         {
             GameOverScreen = GameObject.Find("GameOverPanel");
-            GameOverScreen.SetActive(false);
             if (GameOverScreen == null)
             {
-                Debug.LogError("GameOverPanel not found! Check the name or ensure it's in the scene.");
+                Debug.LogError("GameOverPanel not found! Ensure it's named correctly in the scene.");
             }
         }
 
-        if(GameOverScreen != null){
+        // Hide the GameOver screen initially
+        if (GameOverScreen != null)
+        {
             GameOverScreen.SetActive(false);
         }
     }
@@ -61,45 +76,46 @@ public class FirstPersonController : MonoBehaviour
     }
 
     void MovePlayer()
-{
-    // Apply gravity
-    float moveDirectionY = controller.isGrounded ? -1f : moveDirection.y;
-
-    // Get rotation input from the left and right arrow keys (or A/D)
-    float rotationInput = Input.GetAxis("Horizontal");
-    float moveInput = Input.GetAxis("Vertical"); // Forward/backward movement (up/down arrow keys or W/S)
-
-    // Check if there is forward or backward movement
-    if (moveInput != 0 && !footstepAudioSource.isPlaying)
     {
-        footstepAudioSource.Play(); // Play footstep sound when moving
+        if (controller == null) return;
+
+        // Apply gravity
+        float moveDirectionY = controller.isGrounded ? -1f : moveDirection.y;
+
+        // Get input for movement and rotation
+        float rotationInput = Input.GetAxis("Horizontal");
+        float moveInput = Input.GetAxis("Vertical");
+
+        // Handle footsteps
+        if (moveInput != 0 && footstepAudioSource != null && !footstepAudioSource.isPlaying)
+        {
+            footstepAudioSource.Play();
+        }
+        else if (moveInput == 0 && footstepAudioSource != null && footstepAudioSource.isPlaying)
+        {
+            footstepAudioSource.Stop();
+        }
+
+        // Rotate player
+        transform.Rotate(Vector3.up * rotationInput * lookSpeedX);
+
+        // Calculate forward movement
+        Vector3 move = transform.forward * moveInput;
+
+        // Apply movement
+        controller.Move(move * walkSpeed * Time.deltaTime);
+
+        // Handle jumping
+        if (controller.isGrounded && Input.GetButtonDown("Jump"))
+        {
+            moveDirectionY = jumpForce;
+        }
+
+        // Apply gravity
+        move.y = moveDirectionY;
+        controller.Move(move * Time.deltaTime);
     }
-    else if (moveInput == 0 && footstepAudioSource.isPlaying)  // Stop footstep sound when not moving
-    {
-        footstepAudioSource.Stop();  // Stop footstep sound if player isn't moving
-    }
 
-    // Rotate the player with left and right arrow keys
-    transform.Rotate(Vector3.up * rotationInput * lookSpeedX);
-
-    // Calculate forward movement based on the player's current rotation
-    Vector3 move = transform.forward * moveInput;
-
-    // Apply the movement
-    controller.Move(move * walkSpeed * Time.deltaTime);
-
-    // Handle jumping
-    if (controller.isGrounded && Input.GetButtonDown("Jump"))
-    {
-        moveDirectionY = jumpForce; // Jumping
-    }
-
-    // Apply gravity
-    move.y = moveDirectionY;
-    controller.Move(move * Time.deltaTime);
-}
-
-    
     void TryCollect()
     {
         if (Input.GetMouseButtonDown(0) || Input.touchCount > 0)
@@ -109,6 +125,8 @@ public class FirstPersonController : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, interactDistance))
             {
+                Debug.Log("Hit: " + hit.collider.name); // Debug to see what was hit
+
                 if (hit.collider.CompareTag("Book"))
                 {
                     CollectItem(bookSound, hit.collider.gameObject);
@@ -127,9 +145,20 @@ public class FirstPersonController : MonoBehaviour
 
     void CollectItem(AudioClip clip, GameObject item)
     {
-        collectablesAudioSource.PlayOneShot(clip);
+        if (collectablesAudioSource != null)
+        {
+            collectablesAudioSource.PlayOneShot(clip);
+        }
+
+        if (BurstEffect != null)
+        {
+            Instantiate(BurstEffect, item.transform.position, Quaternion.identity).Play();
+        }
+
         Destroy(item);
         itemsCollected++;
+
+        Debug.Log($"Collected {itemsCollected}/{totalItems} items.");
 
         if (itemsCollected >= totalItems)
         {
@@ -139,13 +168,21 @@ public class FirstPersonController : MonoBehaviour
 
     void ShowGameOver()
     {
-        GameOverScreen.SetActive(true);
-        Time.timeScale = 0f;  // Pause the game
+        if (GameOverScreen != null)
+        {
+            GameOverScreen.SetActive(true);
+        }
+        Time.timeScale = 0f; // Pause the game
     }
 
     public void RestartGame()
     {
-        Time.timeScale = 1f;  // Resume the game
+        Time.timeScale = 1f; // Resume the game
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+      public void ExitToMainMenu()
+    {
+        Time.timeScale = 1f; // Resume the game time
+        SceneManager.LoadScene("MainMenuScene"); // Load the main menu scene
     }
 }

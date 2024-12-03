@@ -192,11 +192,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29658baf58a2d4fb38f6860cc00dddf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 2
+  walkSpeed: 10
   lookSpeedX: 1
   lookSpeedY: 1
   jumpForce: 8
-  GameOverScreen: {fileID: 0}
+  GameOverScreen: {fileID: 548474226544336532, guid: e941deae6946e434fabf667b3cb7492e, type: 3}
   BurstEffect: {fileID: 4147077597889916148, guid: 30ea4360e2a254756946d7ff79d8aab2, type: 3}
   bookSound: {fileID: 8300000, guid: 6f26da25a70c44213bf3c7d8b3f5cccc, type: 3}
   swordSound: {fileID: 8300000, guid: d4ce2574e94324833b1c47d88efe5e06, type: 3}
@@ -216,7 +216,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 2
   m_Radius: 0.5
-  m_SlopeLimit: 45
+  m_SlopeLimit: 8
   m_StepOffset: 0.3
   m_SkinWidth: 0.07
   m_MinMoveDistance: 0.001
