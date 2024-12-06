@@ -53,7 +53,7 @@ public class FirstPersonController : MonoBehaviour
         }
 
         // Find GameOverPanel in the scene if not assigned
-        if (GameOverScreen == null)
+       /* if (GameOverScreen == null)
         {
             GameOverScreen = GameObject.Find("GameOverPanel");
             if (GameOverScreen == null)
@@ -66,7 +66,7 @@ public class FirstPersonController : MonoBehaviour
         if (GameOverScreen != null)
         {
             GameOverScreen.SetActive(false);
-        }
+        }*/
     }
 
     void Update()
@@ -160,13 +160,13 @@ public class FirstPersonController : MonoBehaviour
 
         Debug.Log($"Collected {itemsCollected}/{totalItems} items.");
 
-        if (itemsCollected >= totalItems)
+        /*if (itemsCollected >= totalItems)
         {
             ShowGameOver();
-        }
+        }*/
     }
 
-    void ShowGameOver()
+    /*void ShowGameOver()
     {
         if (GameOverScreen != null)
         {
@@ -184,5 +184,5 @@ public class FirstPersonController : MonoBehaviour
     {
         Time.timeScale = 1f; // Resume the game time
         SceneManager.LoadScene("MainMenuScene"); // Load the main menu scene
-    }
+    }*/
 }
