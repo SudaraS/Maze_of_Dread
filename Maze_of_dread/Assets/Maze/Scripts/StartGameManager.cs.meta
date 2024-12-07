@@ -3,7 +3,10 @@ guid: 0e4ac5557253f45fd9a4d00071954924
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - instructionsPanel: {fileID: 2736472440369285970, guid: b1a95c41cd26945ad826c43e8a0d6511, type: 3}
+  - instructionsButton: {fileID: 633779258243547263, guid: c8c3d4b9c041c4a4b827c96943f5cf6f, type: 3}
+  - instructionsText: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
