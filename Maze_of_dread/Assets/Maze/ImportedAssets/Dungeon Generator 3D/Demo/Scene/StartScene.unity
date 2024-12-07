@@ -154,6 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   instructionsPanel: {fileID: 1658925374}
   instructionsButton: {fileID: 1962077385}
+  instructionsText: {fileID: 0}
 --- !u!4 &47069121
 Transform:
   m_ObjectHideFlags: 0
@@ -600,6 +601,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   instructionsPanel: {fileID: 0}
   instructionsButton: {fileID: 0}
+  instructionsText: {fileID: 0}
 --- !u!1 &570179770
 GameObject:
   m_ObjectHideFlags: 0
@@ -1577,7 +1579,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "INSTRUCTIONS\n\n01. Use arrow keys for movemet  \n02. Click on the collectable
-    items to collect them  \n03. Spacebar for shooting"
+    items to collect them  \n03. Spacebar for shooting\n04. Reach the blue checkpoint
+    to go to the next level"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8a89fa14b10d46a99122fd4f73fca9a2, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

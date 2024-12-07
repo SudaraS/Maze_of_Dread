@@ -173,7 +173,7 @@ public class FirstPersonController : MonoBehaviour
             GameOverScreen.SetActive(true);
         }
         Time.timeScale = 0f; // Pause the game
-    }
+    }*/
 
     public void RestartGame()
     {
@@ -184,5 +184,5 @@ public class FirstPersonController : MonoBehaviour
     {
         Time.timeScale = 1f; // Resume the game time
         SceneManager.LoadScene("MainMenuScene"); // Load the main menu scene
-    }*/
+    }
 }
