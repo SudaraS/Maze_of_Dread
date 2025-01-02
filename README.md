@@ -1,6 +1,8 @@
 # Maze of Dread
 
-This is a first person core 3D game where the player is navigating a dungeon. In the maze, the player will encounter enemies of different difficulties which they have to fight and collect all teh collectibles. The end of the level is determined by whether the player collected all the items before passing through the blue game over screen.
+This is a first person core 3D game where the player is navigating a dungeon. In the maze, the player will encounter enemies of different difficulties which they have to fight and collect all teh collectibles. The end of the level is determined by whether the player collected all the items before passing through the blue game over screen. 
+
+Link to the website: https://sudaras.github.io/Maze_of_Dread/
 
 ## Features
 
